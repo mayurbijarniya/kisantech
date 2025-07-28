@@ -1,7 +1,25 @@
 {
   "name": "kisantech-unified",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Modern agricultural e-commerce platform connecting farmers with consumers",
+  "license": "MIT",
+  "author": "KisanTech Team",
+  "keywords": [
+    "agriculture",
+    "e-commerce",
+    "farming",
+    "nextjs",
+    "react",
+    "typescript",
+    "mongodb",
+    "agricultural-marketplace"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mayurbijarniya/kisantech.git"
+  },
+  "homepage": "https://kisantech.mayur.app",
+  "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
