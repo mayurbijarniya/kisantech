@@ -10,7 +10,7 @@ const footerLinks = {
   ],
   products: [
     { name: "E-commerce Store", href: "/store" },
-    { name: "Equipment Rentals", href: "/rentals" },
+    { name: "Equipment Rentals", href: "/rent" },
     { name: "Weather Forecast", href: "/weather" },
   ],
   support: [
