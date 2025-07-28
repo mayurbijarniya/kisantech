@@ -28,7 +28,7 @@ A modern agricultural e-commerce platform built with Next.js, connecting farmers
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/mayurbijarniya/kisantech
 cd kisantech-unified
 ```
 
