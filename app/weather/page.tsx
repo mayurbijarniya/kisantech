@@ -29,7 +29,13 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
-  Loader2
+  Loader2,
+  Globe,
+  Wheat,
+  Shield,
+  TrendingUp,
+  Activity,
+  Target
 } from "lucide-react";
 
 interface WeatherData {
@@ -285,19 +291,25 @@ export default function WeatherPage() {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-4 dark:text-white">🌦️ Agricultural Weather Intelligence</h1>
+          <h1 className="text-4xl font-bold mb-4 dark:text-white flex items-center justify-center gap-3">
+            <CloudRain className="h-10 w-10 text-blue-500" />
+            Agricultural Weather Intelligence
+          </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Get real-time weather analysis and crop-specific recommendations for smart farming decisions
           </p>
           <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
-              🌍 Global Coverage
+              <Globe className="h-4 w-4" />
+              Global Coverage
             </span>
             <span className="flex items-center gap-1">
-              🌡️ Celsius & Fahrenheit
+              <Thermometer className="h-4 w-4" />
+              Celsius & Fahrenheit
             </span>
             <span className="flex items-center gap-1">
-              🌾 45+ Crops
+              <Wheat className="h-4 w-4" />
+              45+ Crops
             </span>
           </div>
         </div>
@@ -314,7 +326,10 @@ export default function WeatherPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               {/* Location Search */}
               <div className="space-y-2">
-                <label className="text-sm font-medium dark:text-white">📍 Location</label>
+                <label className="text-sm font-medium dark:text-white flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  Location
+                </label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -341,7 +356,10 @@ export default function WeatherPage() {
 
               {/* Crop Selection */}
               <div className="space-y-2">
-                <label className="text-sm font-medium dark:text-white">🌾 Crop (Optional)</label>
+                <label className="text-sm font-medium dark:text-white flex items-center gap-1">
+                  <Wheat className="h-4 w-4" />
+                  Crop (Optional)
+                </label>
                 <div className="relative">
                   <Leaf className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -371,7 +389,10 @@ export default function WeatherPage() {
 
               {/* Temperature Unit Selection */}
               <div className="space-y-2">
-                <label className="text-sm font-medium dark:text-white">🌡️ Temperature Unit</label>
+                <label className="text-sm font-medium dark:text-white flex items-center gap-1">
+                  <Thermometer className="h-4 w-4" />
+                  Temperature Unit
+                </label>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
                     variant={temperatureUnit === 'metric' ? 'default' : 'outline'}
@@ -461,7 +482,10 @@ export default function WeatherPage() {
             {/* Weather Alerts */}
             {weatherData.alerts.length > 0 && (
               <div className="mb-8">
-                <h2 className="text-2xl font-semibold mb-4 dark:text-white">🚨 Agricultural Alerts</h2>
+                <h2 className="text-2xl font-semibold mb-4 dark:text-white flex items-center gap-2">
+                  <Shield className="h-6 w-6 text-red-500" />
+                  Agricultural Alerts
+                </h2>
                 <div className="space-y-4">
                   {weatherData.alerts.map((alert, index) => (
                     <Card key={index} className={`border-l-4 ${
@@ -513,8 +537,22 @@ export default function WeatherPage() {
                               analysis.status === 'optimal' ? 'text-green-600' :
                               analysis.status === 'acceptable' ? 'text-yellow-600' : 'text-red-600'
                             }`}>
-                              {analysis.status === 'optimal' ? '✅ Optimal Conditions' :
-                               analysis.status === 'acceptable' ? '⚠️ Acceptable Conditions' : '❌ Poor Conditions'}
+                              {analysis.status === 'optimal' ? (
+                                <span className="flex items-center gap-1">
+                                  <CheckCircle className="h-4 w-4" />
+                                  Optimal Conditions
+                                </span>
+                              ) : analysis.status === 'acceptable' ? (
+                                <span className="flex items-center gap-1">
+                                  <AlertTriangle className="h-4 w-4" />
+                                  Acceptable Conditions
+                                </span>
+                              ) : (
+                                <span className="flex items-center gap-1">
+                                  <XCircle className="h-4 w-4" />
+                                  Poor Conditions
+                                </span>
+                              )}
                             </span>
                             <p className="text-sm text-muted-foreground">
                               Current weather is {analysis.status} for {selectedCrop} cultivation
@@ -550,7 +588,10 @@ export default function WeatherPage() {
 
                         {cropDatabase[selectedCrop] && (
                           <div className="p-4 bg-muted/50 rounded-lg">
-                            <h4 className="font-semibold mb-3 dark:text-white">📊 Crop Requirements vs Current Conditions</h4>
+                            <h4 className="font-semibold mb-3 dark:text-white flex items-center gap-2">
+                              <TrendingUp className="h-4 w-4" />
+                              Crop Requirements vs Current Conditions
+                            </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-3">
                                 <div className="flex justify-between items-center p-2 bg-background rounded">
@@ -694,7 +735,10 @@ export default function WeatherPage() {
                 {weatherData.current.uvIndex > 0 && (
                   <Card>
                     <CardHeader>
-                      <CardTitle className="dark:text-white">☀️ Sun Protection</CardTitle>
+                      <CardTitle className="dark:text-white flex items-center gap-2">
+                        <Sun className="h-5 w-5 text-yellow-500" />
+                        Sun Protection
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-center">
@@ -720,7 +764,10 @@ export default function WeatherPage() {
                 {/* Agricultural Conditions */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="dark:text-white">🌾 Agricultural Conditions</CardTitle>
+                    <CardTitle className="dark:text-white flex items-center gap-2">
+                      <Wheat className="h-5 w-5 text-green-500" />
+                      Agricultural Conditions
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -777,7 +824,10 @@ export default function WeatherPage() {
                 {/* Smart Farming Tips */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="dark:text-white">💡 Real-Time Farming Insights</CardTitle>
+                    <CardTitle className="dark:text-white flex items-center gap-2">
+                      <Activity className="h-5 w-5 text-blue-500" />
+                      Real-Time Farming Insights
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3 text-sm">
@@ -963,7 +1013,9 @@ export default function WeatherPage() {
         {!hasAnalyzed && !isLoading && (
           <div className="text-center py-12">
             <div className="max-w-md mx-auto">
-              <div className="text-6xl mb-4">🌾</div>
+              <div className="mb-4">
+                <Wheat className="h-16 w-16 text-green-500 mx-auto" />
+              </div>
               <h3 className="text-xl font-semibold mb-2 dark:text-white">Ready to Analyze</h3>
               <p className="text-muted-foreground">
                 Enter a location above and click "Analyze Weather" to get real-time agricultural insights and crop-specific recommendations.
