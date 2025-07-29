@@ -34,6 +34,12 @@ export async function GET(request: NextRequest) {
 
     const currentWeather = await currentWeatherResponse.json();
 
+    // Debug logging for timezone
+    console.log('Location:', currentWeather.name);
+    console.log('Timezone offset (seconds):', currentWeather.timezone);
+    console.log('Sunrise UTC timestamp:', currentWeather.sys.sunrise);
+    console.log('Sunset UTC timestamp:', currentWeather.sys.sunset);
+
     // Fetch 5-day forecast
     const forecastResponse = await fetch(
       `${BASE_URL}/forecast?q=${encodeURIComponent(location)}&appid=${API_KEY}&units=${units}`
@@ -57,24 +63,16 @@ export async function GET(request: NextRequest) {
         condition: currentWeather.weather[0].main,
         description: currentWeather.weather[0].description,
         humidity: currentWeather.main.humidity,
-        windSpeed: Math.round(currentWeather.wind.speed * (units === 'metric' ? 3.6 : 1)), // Convert m/s to km/h for metric
+        windSpeed: Math.round(currentWeather.wind.speed * (units === 'metric' ? 3.6 : 2.237)), // Convert m/s to km/h or mph
         windDirection: currentWeather.wind.deg,
-        visibility: Math.round((currentWeather.visibility || 10000) / 1000), // Convert to km
+        visibility: Math.round((currentWeather.visibility || 10000) / (units === 'metric' ? 1000 : 1609.34)), // Convert to km or miles
         uvIndex: 0, // UV index requires separate API call - will be 0 if not available
         pressure: currentWeather.main.pressure,
         feelsLike: Math.round(currentWeather.main.feels_like),
         dewPoint: calculateDewPoint(currentWeather.main.temp, currentWeather.main.humidity),
         cloudCover: currentWeather.clouds.all,
-        sunrise: new Date(currentWeather.sys.sunrise * 1000).toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit', 
-          hour12: true 
-        }),
-        sunset: new Date(currentWeather.sys.sunset * 1000).toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit', 
-          hour12: true 
-        }),
+        sunrise: formatLocalTime(currentWeather.sys.sunrise, currentWeather.timezone || 0),
+        sunset: formatLocalTime(currentWeather.sys.sunset, currentWeather.timezone || 0),
         icon: currentWeather.weather[0].icon
       },
       forecast: forecast.list.slice(0, 40).filter((_: any, index: number) => index % 8 === 0).map((item: any) => ({
@@ -85,10 +83,10 @@ export async function GET(request: NextRequest) {
         description: item.weather[0].description,
         precipitation: Math.round((item.pop || 0) * 100),
         humidity: item.main.humidity,
-        windSpeed: Math.round(item.wind.speed * (units === 'metric' ? 3.6 : 1)),
+        windSpeed: Math.round(item.wind.speed * (units === 'metric' ? 3.6 : 2.237)),
         icon: item.weather[0].icon
       })),
-      alerts: generateFarmingAlerts(currentWeather, forecast.list[0])
+      alerts: generateFarmingAlerts(currentWeather, forecast.list[0], units)
     };
 
     return NextResponse.json(weatherData);
@@ -109,18 +107,46 @@ function calculateDewPoint(temp: number, humidity: number): number {
   return Math.round((b * alpha) / (a - alpha));
 }
 
+// Helper function to format time with correct timezone
+function formatLocalTime(utcTimestamp: number, timezoneOffsetSeconds: number): string {
+  // Convert UTC timestamp to milliseconds and add timezone offset
+  const localTimeMs = (utcTimestamp + timezoneOffsetSeconds) * 1000;
+  const localDate = new Date(localTimeMs);
+  
+  // Get hours and minutes in UTC (since we already applied the offset)
+  const hours = localDate.getUTCHours();
+  const minutes = localDate.getUTCMinutes();
+  
+  // Convert to 12-hour format
+  let displayHour = hours;
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  
+  if (displayHour === 0) {
+    displayHour = 12; // Midnight
+  } else if (displayHour > 12) {
+    displayHour = displayHour - 12; // Afternoon/evening
+  }
+  
+  const minutesStr = minutes.toString().padStart(2, '0');
+  
+  return `${displayHour}:${minutesStr} ${ampm}`;
+}
+
 // Generate farming-specific alerts
-function generateFarmingAlerts(current: any, forecast: any) {
+function generateFarmingAlerts(current: any, forecast: any, units: string = 'metric') {
   const alerts = [];
   
-  // Temperature alerts
-  if (current.main.temp > 35) {
+  // Temperature alerts - adjust thresholds based on units
+  const highTempThreshold = units === 'metric' ? 35 : 95; // 35°C = 95°F
+  const lowTempThreshold = units === 'metric' ? 5 : 41;   // 5°C = 41°F
+  
+  if (current.main.temp > highTempThreshold) {
     alerts.push({
       type: 'Heat Stress Warning',
       message: 'Extremely high temperatures detected. Ensure adequate irrigation and consider shade protection for sensitive crops.',
       severity: 'high' as const
     });
-  } else if (current.main.temp < 5) {
+  } else if (current.main.temp < lowTempThreshold) {
     alerts.push({
       type: 'Frost Warning',
       message: 'Low temperatures may cause frost damage. Protect sensitive plants and consider covering crops.',

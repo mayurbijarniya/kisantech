@@ -266,10 +266,17 @@ export default function WeatherPage() {
     return getCropRecommendations(selectedCrop, weatherData.current, temperatureUnit);
   };
 
-  // Helper functions for temperature display
+  // Helper functions for temperature display and thresholds
   const getTemperatureUnit = () => temperatureUnit === 'metric' ? '°C' : '°F';
   const getWindSpeedUnit = () => temperatureUnit === 'metric' ? 'km/h' : 'mph';
   const getVisibilityUnit = () => temperatureUnit === 'metric' ? 'km' : 'miles';
+  
+  // Temperature thresholds based on unit
+  const getHeatStressThreshold = () => temperatureUnit === 'metric' ? 35 : 95;   // 35°C = 95°F
+  const getFrostThreshold = () => temperatureUnit === 'metric' ? 5 : 41;        // 5°C = 41°F
+  const getOptimalTempMin = () => temperatureUnit === 'metric' ? 15 : 59;       // 15°C = 59°F
+  const getOptimalTempMax = () => temperatureUnit === 'metric' ? 30 : 86;       // 30°C = 86°F
+  const getWindThreshold = () => temperatureUnit === 'metric' ? 25 : 16;        // 25 km/h = ~16 mph
 
   return (
     <div className="min-h-screen bg-background">
@@ -282,6 +289,17 @@ export default function WeatherPage() {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Get real-time weather analysis and crop-specific recommendations for smart farming decisions
           </p>
+          <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1">
+              🌍 Global Coverage
+            </span>
+            <span className="flex items-center gap-1">
+              🌡️ Celsius & Fahrenheit
+            </span>
+            <span className="flex items-center gap-1">
+              🌾 45+ Crops
+            </span>
+          </div>
         </div>
 
         {/* Search Interface */}
@@ -537,7 +555,12 @@ export default function WeatherPage() {
                               <div className="space-y-3">
                                 <div className="flex justify-between items-center p-2 bg-background rounded">
                                   <span className="text-sm text-muted-foreground">Optimal Temperature:</span>
-                                  <span className="font-medium">{cropDatabase[selectedCrop].optimalTemp[0]}°C - {cropDatabase[selectedCrop].optimalTemp[1]}°C</span>
+                                  <span className="font-medium">
+                                    {temperatureUnit === 'metric' 
+                                      ? `${cropDatabase[selectedCrop].optimalTemp[0]}°C - ${cropDatabase[selectedCrop].optimalTemp[1]}°C`
+                                      : `${Math.round((cropDatabase[selectedCrop].optimalTemp[0] * 9/5) + 32)}°F - ${Math.round((cropDatabase[selectedCrop].optimalTemp[1] * 9/5) + 32)}°F`
+                                    }
+                                  </span>
                                 </div>
                                 <div className="flex justify-between items-center p-2 bg-background rounded">
                                   <span className="text-sm text-muted-foreground">Current Temperature:</span>
@@ -708,12 +731,12 @@ export default function WeatherPage() {
                           <span className="text-sm font-medium">Temperature ({weatherData.current.temperature}{getTemperatureUnit()})</span>
                         </div>
                         <Badge variant={
-                          weatherData.current.temperature > 35 ? "destructive" :
-                          weatherData.current.temperature >= 15 && weatherData.current.temperature <= 30 ? "default" : "secondary"
+                          weatherData.current.temperature > getHeatStressThreshold() ? "destructive" :
+                          weatherData.current.temperature >= getOptimalTempMin() && weatherData.current.temperature <= getOptimalTempMax() ? "default" : "secondary"
                         }>
-                          {weatherData.current.temperature > 35 ? "Too Hot" :
-                           weatherData.current.temperature < 5 ? "Too Cold" :
-                           weatherData.current.temperature >= 15 && weatherData.current.temperature <= 30 ? "Good" : "Cool"}
+                          {weatherData.current.temperature > getHeatStressThreshold() ? "Too Hot" :
+                           weatherData.current.temperature < getFrostThreshold() ? "Too Cold" :
+                           weatherData.current.temperature >= getOptimalTempMin() && weatherData.current.temperature <= getOptimalTempMax() ? "Good" : "Cool"}
                         </Badge>
                       </div>
 
@@ -740,11 +763,11 @@ export default function WeatherPage() {
                           <span className="text-sm font-medium">Wind ({weatherData.current.windSpeed} {getWindSpeedUnit()})</span>
                         </div>
                         <Badge variant={
-                          weatherData.current.windSpeed > 25 ? "destructive" :
-                          weatherData.current.windSpeed <= 15 ? "default" : "secondary"
+                          weatherData.current.windSpeed > getWindThreshold() ? "destructive" :
+                          weatherData.current.windSpeed <= (temperatureUnit === 'metric' ? 15 : 9) ? "default" : "secondary"
                         }>
-                          {weatherData.current.windSpeed > 25 ? "Strong" :
-                           weatherData.current.windSpeed <= 15 ? "Calm" : "Moderate"}
+                          {weatherData.current.windSpeed > getWindThreshold() ? "Strong" :
+                           weatherData.current.windSpeed <= (temperatureUnit === 'metric' ? 15 : 9) ? "Calm" : "Moderate"}
                         </Badge>
                       </div>
                     </div>
@@ -759,7 +782,7 @@ export default function WeatherPage() {
                   <CardContent>
                     <div className="space-y-3 text-sm">
                       {/* Temperature-based recommendations */}
-                      {weatherData.current.temperature > 35 && (
+                      {weatherData.current.temperature > getHeatStressThreshold() && (
                         <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
                           <AlertTriangle className="h-4 w-4 text-red-500 mt-0.5" />
                           <p className="text-red-700 dark:text-red-300">
@@ -768,7 +791,7 @@ export default function WeatherPage() {
                         </div>
                       )}
                       
-                      {weatherData.current.temperature < 5 && (
+                      {weatherData.current.temperature < getFrostThreshold() && (
                         <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                           <AlertTriangle className="h-4 w-4 text-blue-500 mt-0.5" />
                           <p className="text-blue-700 dark:text-blue-300">
@@ -797,7 +820,7 @@ export default function WeatherPage() {
                       )}
                       
                       {/* Wind-based recommendations */}
-                      {weatherData.current.windSpeed > 25 && (
+                      {weatherData.current.windSpeed > getWindThreshold() && (
                         <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
                           <Wind className="h-4 w-4 text-red-500 mt-0.5" />
                           <p className="text-red-700 dark:text-red-300">
@@ -817,9 +840,9 @@ export default function WeatherPage() {
                       )}
                       
                       {/* Ideal conditions */}
-                      {weatherData.current.temperature >= 15 && weatherData.current.temperature <= 30 && 
+                      {weatherData.current.temperature >= getOptimalTempMin() && weatherData.current.temperature <= getOptimalTempMax() && 
                        weatherData.current.humidity >= 40 && weatherData.current.humidity <= 70 && 
-                       weatherData.current.windSpeed <= 15 && (
+                       weatherData.current.windSpeed <= (temperatureUnit === 'metric' ? 15 : 9) && (
                         <div className="flex items-start gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                           <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
                           <p className="text-green-700 dark:text-green-300">
@@ -894,7 +917,7 @@ export default function WeatherPage() {
                           <Badge variant="secondary" className="text-xs">
                             Limited Field Work
                           </Badge>
-                        ) : day.high > 35 ? (
+                        ) : day.high > getHeatStressThreshold() ? (
                           <Badge variant="destructive" className="text-xs">
                             Heat Stress Risk
                           </Badge>
