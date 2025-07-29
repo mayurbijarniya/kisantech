@@ -1,135 +1,98 @@
-# KisanTech - Agricultural E-commerce Platform
+# KisanTech - Smart Agricultural Platform
 
-A modern agricultural e-commerce platform built with Next.js, connecting farmers directly with consumers for fresh produce and equipment rentals.
+Agricultural e-commerce platform with intelligent weather analysis for data-driven farming decisions.
 
-## 🌱 Features
+## Features
 
-- **Product Management**: Buy and rent agricultural products
-- **User Roles**: Buyers, Sellers, and Admin dashboards
-- **Real-time Weather**: Weather forecasting for farming activities
-- **Dark/Light Mode**: Complete theme support
-- **Responsive Design**: Works on all devices
-- **Secure Authentication**: JWT-based authentication
-- **Image Upload**: Product photo management
-- **Cart System**: Shopping cart with localStorage
-- **Order Management**: Complete order tracking system
+- **E-commerce**: Buy/sell agricultural products and equipment rentals
+- **Weather Intelligence**: Real-time weather data with crop-specific recommendations  
+- **Multi-user System**: Farmers, buyers, and admin dashboards
+- **Global Support**: Celsius/Fahrenheit units, worldwide locations
+- **Responsive Design**: Dark/light mode, mobile-friendly interface
 
-## 🚀 Tech Stack
+## Tech Stack
 
-- **Frontend**: Next.js 15, React 19, TypeScript
-- **Styling**: Tailwind CSS, Framer Motion
-- **Backend**: Next.js API Routes, MongoDB
-- **Authentication**: JWT, bcryptjs
-- **UI Components**: Radix UI, Lucide React
-- **Database**: MongoDB with Mongoose
+- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, MongoDB, JWT Authentication  
+- **APIs**: OpenWeatherMap for weather data
 - **Deployment**: Vercel
 
-## 📦 Installation
+## Quick Start
 
-1. Clone the repository:
 ```bash
 git clone https://github.com/mayurbijarniya/kisantech
 cd kisantech-unified
-```
-
-2. Install dependencies:
-```bash
 npm install
 ```
 
-3. Set up environment variables:
-```bash
-cp .env.example .env.local
+Create `.env.local`:
+```env
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+OPENWEATHERMAP_API_KEY=your_openweathermap_api_key
 ```
 
-4. Configure your environment variables in `.env.local`
-
-5. Run the development server:
 ```bash
 npm run dev
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+Get your free OpenWeatherMap API key at [openweathermap.org](https://openweathermap.org/api)
 
-## 🌍 Environment Variables
-
-### Required Variables:
-- `MONGODB_URI`: MongoDB connection string
-- `JWT_SECRET`: Secret key for JWT tokens
-
-### Optional Variables:
-- `NEXT_PUBLIC_COMPANY_NAME`: Company name
-- `NEXT_PUBLIC_COMPANY_DESCRIPTION`: Company description
-- `WEATHER_API_KEY`: For real-time weather data
-
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 kisantech-unified/
-├── app/                    # Next.js 13+ App Router
+├── app/                    # Next.js App Router
 │   ├── api/               # API routes
-│   ├── (auth)/            # Authentication pages
-│   ├── dashboard/         # Dashboard pages
-│   └── globals.css        # Global styles
-├── components/            # Reusable components
-│   ├── ui/               # UI components
-│   ├── layout/           # Layout components
-│   └── sections/         # Page sections
-├── context/              # React contexts
-├── lib/                  # Utility functions
-├── models/               # MongoDB models
-└── public/               # Static assets
+│   ├── weather/           # Weather intelligence
+│   ├── dashboard/         # User dashboards  
+│   ├── login/             # Authentication
+│   ├── products/          # Product pages
+│   └── cart/              # Shopping cart
+├── components/            # UI components
+├── lib/                   # Utilities
+├── context/               # React contexts
+├── models/                # MongoDB schemas
+└── public/                # Static assets
 ```
 
-## 🚀 Deployment
+## Deployment
 
-### Deploy to Vercel:
+Deploy to Vercel with these environment variables:
+```env
+MONGODB_URI=your_production_mongodb_uri
+JWT_SECRET=your_production_jwt_secret
+OPENWEATHERMAP_API_KEY=your_api_key
+```
 
-1. Install Vercel CLI:
+## Scripts
+
 ```bash
-npm i -g vercel
+npm run dev      # Development server
+npm run build    # Production build
+npm run start    # Production server
+npm run lint     # Code linting
 ```
 
-2. Deploy:
-```bash
-npm run deploy
-```
+## Weather Features
 
-### Environment Variables for Vercel:
-- `MONGODB_URI`
-- `JWT_SECRET`
-- `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
+- **45+ crops** with optimal growing conditions analysis
+- **Global locations** with real-time weather data
+- **Temperature units**: Celsius & Fahrenheit support
+- **Smart recommendations** for farming activities
+- **5-day forecast** with agricultural insights
 
-## 🔧 Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run type-check` - Run TypeScript checks
-- `npm run clean` - Clean build files
-- `npm run deploy` - Deploy to Vercel
-
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Run tests and linting
-5. Submit a pull request
+4. Submit a pull request
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License.
-
-## 🙏 Acknowledgments
-
-- Built with Next.js and React
-- UI components from Radix UI
-- Icons from Lucide React
-- Styling with Tailwind CSS
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-Made with ❤️ for farmers and agricultural communities.
+Built for farmers and agricultural communities worldwide.
