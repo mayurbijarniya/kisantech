@@ -303,7 +303,7 @@ export default function ContactPage() {
                 ))}
 
                 {/* FAQ Link */}
-                <Card className="bg-gradient-to-r from-green-50 to-blue-50">
+                {/*<Card className="bg-gradient-to-r from-green-50 to-blue-50">
                   <CardContent className="p-6 text-center">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
                       Need Quick Answers?
@@ -317,7 +317,7 @@ export default function ContactPage() {
                       </a>
                     </Button>
                   </CardContent>
-                </Card>
+                </Card>*/}
               </motion.div>
             </div>
           </div>

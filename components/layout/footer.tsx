@@ -15,7 +15,7 @@ const footerLinks = {
   ],
   support: [
     { name: "Help Center", href: "/contact" },
-    { name: "Test Database", href: "/test-db" },
+    //{ name: "Test Database", href: "/test-db" },
   ],
   legal: [
     { name: "Privacy Policy", href: "/privacy" },
